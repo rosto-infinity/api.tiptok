@@ -13,12 +13,14 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth:sanctum')->name('api.')->group(function (): void {
+Route::middleware(['auth:sanctum', 'throttle:api'])->name('api.')->group(function (): void {
     // Current user profile
     Route::get('/user', [UserController::class, 'show'])->name('user.show');
 
     // Avatar management
-    Route::post('/user/avatar', [UserAvatarController::class, 'update'])->name('user.avatar.update');
+    Route::post('/user/avatar', [UserAvatarController::class, 'update'])
+        ->middleware('throttle:uploads')
+        ->name('user.avatar.update');
     Route::delete('/user/avatar', [UserAvatarController::class, 'destroy'])->name('user.avatar.destroy');
 
     // Personal Access Tokens management
