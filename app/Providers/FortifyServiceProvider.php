@@ -21,7 +21,42 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(
+            \Laravel\Fortify\Contracts\LoginResponse::class,
+            \App\Http\Responses\LoginResponse::class
+        );
+        $this->app->singleton(
+            \Laravel\Fortify\Contracts\TwoFactorLoginResponse::class,
+            \App\Http\Responses\TwoFactorLoginResponse::class
+        );
+        $this->app->singleton(
+            \Laravel\Fortify\Contracts\RegisterResponse::class,
+            \App\Http\Responses\RegisterResponse::class
+        );
+        $this->app->singleton(
+            \Laravel\Fortify\Contracts\LogoutResponse::class,
+            \App\Http\Responses\LogoutResponse::class
+        );
+        $this->app->singleton(
+            \Laravel\Fortify\Contracts\ProfileInformationUpdatedResponse::class,
+            \App\Http\Responses\ProfileInformationUpdatedResponse::class
+        );
+        $this->app->singleton(
+            \Laravel\Fortify\Contracts\PasswordUpdateResponse::class,
+            \App\Http\Responses\PasswordUpdateResponse::class
+        );
+        $this->app->singleton(
+            \Laravel\Fortify\Contracts\TwoFactorConfirmedResponse::class,
+            \App\Http\Responses\TwoFactorConfirmedResponse::class
+        );
+        $this->app->singleton(
+            \Laravel\Fortify\Contracts\TwoFactorEnabledResponse::class,
+            \App\Http\Responses\TwoFactorEnabledResponse::class
+        );
+        $this->app->singleton(
+            \Laravel\Fortify\Contracts\TwoFactorDisabledResponse::class,
+            \App\Http\Responses\TwoFactorDisabledResponse::class
+        );
     }
 
     /**
