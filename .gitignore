@@ -12,6 +12,7 @@
 /.phpunit.cache
 /.vscode
 /.zed
+/agents-docs-framework
 /auth.json
 /node_modules
 /public/build
@@ -25,3 +26,7 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+**/caddy
+frankenphp
+frankenphp-worker.php
