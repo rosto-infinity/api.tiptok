@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Encoders\WebpEncoder;
 use Intervention\Image\Laravel\Facades\Image;
 
 class UpdateUserAvatarAction
@@ -20,15 +21,14 @@ class UpdateUserAvatarAction
         // 1. Delete previous avatar if existing on disk
         $this->deleteOldAvatar($user);
 
-        // 2. Process image with Intervention Image (v4)
-        $image = Image::decode($file->getRealPath())
-            ->cover(400, 400);
-
-        $encoded = (string) $image->toWebp(80);
+        // 2. Process image with Intervention Image (decode -> cover 400x400 -> webp)
+        $encoded = Image::decode($file->getRealPath())
+            ->cover(400, 400)
+            ->encode(new WebpEncoder(quality: 80));
 
         // 3. Store on the public disk
         $filename = 'avatars/'.Str::uuid().'.webp';
-        Storage::disk('public')->put($filename, $encoded);
+        Storage::disk('public')->put($filename, $encoded->toString());
 
         // 4. Update the user model
         $user->forceFill([
