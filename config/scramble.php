@@ -56,11 +56,11 @@ return [
         /*
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
-        'description' => '',
+        'description' => 'Documentation officielle et interactive de l\'API REST TipTok.',
     ],
 
     'ui' => [
-        'title' => null,
+        'title' => 'TipTok API Reference',
     ],
 
     /*

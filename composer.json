@@ -1,11 +1,12 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "tiptok/api",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "TipTok API Backend (Laravel 13)",
     "keywords": [
-        "laravel",
-        "framework"
+        "tiptok",
+        "api",
+        "laravel"
     ],
     "license": "MIT",
     "require": {

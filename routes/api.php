@@ -14,8 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum', 'throttle:api'])->name('api.')->group(function (): void {
-    // Current user profile
+    // Current user profile & account deletion
     Route::get('/user', [UserController::class, 'show'])->name('user.show');
+    Route::delete('/user/account', [UserController::class, 'destroy'])->name('user.account.destroy');
 
     // Avatar management
     Route::post('/user/avatar', [UserAvatarController::class, 'update'])
