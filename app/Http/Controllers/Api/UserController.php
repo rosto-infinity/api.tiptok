@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\V1\UserResource;
+use App\Http\Resources\Api\UserResource;
 use Illuminate\Http\Request;
 
 class UserController extends Controller

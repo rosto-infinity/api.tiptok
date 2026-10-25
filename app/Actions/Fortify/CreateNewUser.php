@@ -31,7 +31,9 @@ class CreateNewUser implements CreatesNewUsers
                 'max:255',
                 Rule::unique(User::class),
             ],
-            'phone' => ['nullable', 'string', 'phone:AUTO,CI,FR,US'],
+            'phone' => ['nullable', 'string', 'phone:AUTO,CI,CM,FR,US,CA,BE,CH,SN,ML,GA,CG,CD,MA,DZ,TN,GB,DE,IT,ES,NG,GH,KE,ZA,TG,BJ,BF,GN,MG'],
+            'birth_date' => ['nullable', 'date', 'before:today'],
+            'birth_place' => ['nullable', 'string', 'max:255'],
             'password' => $this->passwordRules(),
         ])->validate();
 
@@ -39,6 +41,8 @@ class CreateNewUser implements CreatesNewUsers
             'name' => $input['name'],
             'email' => $input['email'],
             'phone' => $input['phone'] ?? null,
+            'birth_date' => $input['birth_date'] ?? null,
+            'birth_place' => $input['birth_place'] ?? null,
             'password' => Hash::make($input['password']),
         ]);
     }

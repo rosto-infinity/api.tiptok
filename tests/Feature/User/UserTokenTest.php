@@ -5,9 +5,9 @@ declare(strict_types=1);
 use App\Models\User;
 
 it('denies unauthenticated access to token endpoints', function () {
-    $this->getJson('/api/v1/user/tokens')->assertStatus(401);
-    $this->deleteJson('/api/v1/user/tokens/1')->assertStatus(401);
-    $this->deleteJson('/api/v1/user/tokens/others')->assertStatus(401);
+    $this->getJson('/api/user/tokens')->assertStatus(401);
+    $this->deleteJson('/api/user/tokens/1')->assertStatus(401);
+    $this->deleteJson('/api/user/tokens/others')->assertStatus(401);
 });
 
 it('lists all active personal access tokens for the authenticated user', function () {
@@ -16,7 +16,7 @@ it('lists all active personal access tokens for the authenticated user', functio
     $token1 = $user->createToken('Desktop App');
     $token2 = $user->createToken('Mobile iPhone');
 
-    $response = $this->withToken($token2->plainTextToken)->getJson('/api/v1/user/tokens');
+    $response = $this->withToken($token2->plainTextToken)->getJson('/api/user/tokens');
 
     $response->assertStatus(200)
         ->assertJsonCount(2, 'data')
@@ -47,7 +47,7 @@ it('revokes a specific token belonging to the authenticated user', function () {
     $token = $user->createToken('Disposable Session');
 
     $response = $this->withToken($token->plainTextToken)
-        ->deleteJson("/api/v1/user/tokens/{$token->accessToken->id}");
+        ->deleteJson("/api/user/tokens/{$token->accessToken->id}");
 
     $response->assertStatus(200)
         ->assertJson([
@@ -65,7 +65,7 @@ it('cannot revoke another users token', function () {
     $tokenB = $userB->createToken('User B Private Token');
 
     $response = $this->withToken($tokenA->plainTextToken)
-        ->deleteJson("/api/v1/user/tokens/{$tokenB->accessToken->id}");
+        ->deleteJson("/api/user/tokens/{$tokenB->accessToken->id}");
 
     $response->assertStatus(404);
     expect($userB->tokens()->where('id', $tokenB->accessToken->id)->exists())->toBeTrue();
@@ -79,7 +79,7 @@ it('revokes all other tokens except the current active session', function () {
     $token3 = $user->createToken('Third Old Token');
 
     $response = $this->withToken($token2->plainTextToken)
-        ->deleteJson('/api/v1/user/tokens/others');
+        ->deleteJson('/api/user/tokens/others');
 
     $response->assertStatus(200)
         ->assertJson([

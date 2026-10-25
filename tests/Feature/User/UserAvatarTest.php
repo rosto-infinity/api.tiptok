@@ -21,7 +21,7 @@ it('uploads and optimizes user avatar to webp', function () {
 
     $file = UploadedFile::fake()->image('photo.jpg', 800, 800);
 
-    $response = $this->postJson('/api/v1/user/avatar', [
+    $response = $this->postJson('/api/user/avatar', [
         'avatar' => $file,
     ]);
 
@@ -40,14 +40,14 @@ it('removes old avatar from disk when new one is uploaded', function () {
     Sanctum::actingAs($user, ['*']);
 
     $firstFile = UploadedFile::fake()->image('first.jpg', 400, 400);
-    $this->postJson('/api/v1/user/avatar', ['avatar' => $firstFile]);
+    $this->postJson('/api/user/avatar', ['avatar' => $firstFile]);
 
     $user->refresh();
     $firstAvatarPath = $user->avatar;
     Storage::disk('public')->assertExists($firstAvatarPath);
 
     $secondFile = UploadedFile::fake()->image('second.png', 400, 400);
-    $this->postJson('/api/v1/user/avatar', ['avatar' => $secondFile]);
+    $this->postJson('/api/user/avatar', ['avatar' => $secondFile]);
 
     $user->refresh();
     $secondAvatarPath = $user->avatar;
@@ -63,7 +63,7 @@ it('rejects invalid avatar format or oversized files', function () {
 
     $pdfFile = UploadedFile::fake()->create('document.pdf', 500);
 
-    $response = $this->postJson('/api/v1/user/avatar', [
+    $response = $this->postJson('/api/user/avatar', [
         'avatar' => $pdfFile,
     ]);
 
@@ -78,13 +78,13 @@ it('deletes custom avatar and resets to default generated avatar', function () {
     Sanctum::actingAs($user, ['*']);
 
     $file = UploadedFile::fake()->image('me.jpg', 400, 400);
-    $this->postJson('/api/v1/user/avatar', ['avatar' => $file]);
+    $this->postJson('/api/user/avatar', ['avatar' => $file]);
 
     $user->refresh();
     $avatarPath = $user->avatar;
     Storage::disk('public')->assertExists($avatarPath);
 
-    $response = $this->deleteJson('/api/v1/user/avatar');
+    $response = $this->deleteJson('/api/user/avatar');
 
     $response->assertStatus(200);
     $user->refresh();

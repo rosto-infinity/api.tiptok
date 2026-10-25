@@ -30,7 +30,9 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'max:255',
                 Rule::unique('users')->ignore($user->id),
             ],
-            'phone' => ['nullable', 'string', 'phone:AUTO,CI,FR,US'],
+            'phone' => ['nullable', 'string', 'phone:AUTO,CI,CM,FR,US,CA,BE,CH,SN,ML,GA,CG,CD,MA,DZ,TN,GB,DE,IT,ES,NG,GH,KE,ZA,TG,BJ,BF,GN,MG'],
+            'birth_date' => ['nullable', 'date', 'before:today'],
+            'birth_place' => ['nullable', 'string', 'max:255'],
         ])->validateWithBag('updateProfileInformation');
 
         if ($input['email'] !== $user->email &&
@@ -41,6 +43,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'name' => $input['name'],
                 'email' => $input['email'],
                 'phone' => $input['phone'] ?? $user->phone,
+                'birth_date' => $input['birth_date'] ?? $user->birth_date,
+                'birth_place' => $input['birth_place'] ?? $user->birth_place,
             ])->save();
         }
     }

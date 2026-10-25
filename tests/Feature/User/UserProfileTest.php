@@ -6,8 +6,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 
-it('denies unauthenticated access to api v1 user endpoint', function () {
-    $response = $this->getJson('/api/v1/user');
+it('denies unauthenticated access to api user endpoint', function () {
+    $response = $this->getJson('/api/user');
 
     $response->assertStatus(401);
 });
@@ -21,7 +21,7 @@ it('returns authenticated user profile resource via sanctum', function () {
 
     Sanctum::actingAs($user, ['*']);
 
-    $response = $this->getJson('/api/v1/user');
+    $response = $this->getJson('/api/user');
 
     $response->assertStatus(200)
         ->assertJsonStructure([

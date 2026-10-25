@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Api\V1\UserAvatarController;
-use App\Http\Controllers\Api\V1\UserController;
-use App\Http\Controllers\Api\V1\UserTokenController;
+use App\Http\Controllers\Api\UserAvatarController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\UserTokenController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes - V1
+| API Routes
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('v1')->middleware('auth:sanctum')->name('api.v1.')->group(function (): void {
+Route::middleware('auth:sanctum')->name('api.')->group(function (): void {
     // Current user profile
     Route::get('/user', [UserController::class, 'show'])->name('user.show');
 
