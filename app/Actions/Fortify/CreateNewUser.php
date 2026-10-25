@@ -23,7 +23,7 @@ class CreateNewUser implements CreatesNewUsers
     public function create(array $input): User
     {
         Validator::make($input, [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['nullable', 'string', 'max:255'],
             'email' => [
                 'required',
                 'string',
@@ -37,8 +37,12 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
+        $generatedName = ! empty($input['name'])
+            ? (string) $input['name']
+            : 'user_'.random_int(100000, 999999);
+
         return User::create([
-            'name' => $input['name'],
+            'name' => $generatedName,
             'email' => $input['email'],
             'phone' => $input['phone'] ?? null,
             'birth_date' => $input['birth_date'] ?? null,
