@@ -10,6 +10,7 @@ use App\Http\Resources\Api\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -48,16 +49,24 @@ class UserController extends Controller
             ], 422);
         }
 
-        DB::transaction(function () use ($user, $deleteAvatarAction): void {
-            // 1. Supprimer l'avatar physique si présent
-            $deleteAvatarAction->execute($user);
+        $avatarPath = $user->avatar;
 
-            // 2. Révoquer tous les jetons Sanctum
+        DB::transaction(function () use ($user): void {
+            // 1. Révoquer tous les jetons Sanctum
             $user->tokens()->delete();
 
-            // 3. Supprimer le compte définitivement
+            // 2. Supprimer le compte définitivement
             $user->delete();
         });
+
+        // 3. Supprimer l'avatar physique uniquement après commit de la transaction
+        $deleteAvatarAction->deletePath($avatarPath);
+
+        if ($request->hasSession()) {
+            Auth::guard(config('fortify.guard', 'web'))->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
 
         return response()->json([
             'message' => 'Votre compte et l’ensemble de vos données ont été définitivement supprimés.',

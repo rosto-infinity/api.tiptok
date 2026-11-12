@@ -8,6 +8,7 @@ use App\Http\Resources\Api\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\TwoFactorLoginResponse as TwoFactorLoginResponseContract;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,8 +26,16 @@ class TwoFactorLoginResponse implements TwoFactorLoginResponseContract
 
         $token = null;
         if ($request->filled('device_name') || $request->header('X-Request-Token')) {
-            $deviceName = (string) $request->input('device_name', 'auth_token');
-            $token = $user->createToken($deviceName)->plainTextToken;
+            $rawDeviceName = trim((string) $request->input('device_name', 'auth_token'));
+            $sanitizedDeviceName = preg_replace('/[\x00-\x1F\x7F]/u', '', $rawDeviceName) ?? '';
+            $deviceName = Str::limit($sanitizedDeviceName !== '' ? $sanitizedDeviceName : 'auth_token', 100, '');
+
+            $expirationMinutes = config('sanctum.expiration');
+            $expiresAt = is_numeric($expirationMinutes) && (int) $expirationMinutes > 0
+                ? now()->addMinutes((int) $expirationMinutes)
+                : null;
+
+            $token = $user->createToken($deviceName, ['*'], $expiresAt)->plainTextToken;
         }
 
         return new JsonResponse([

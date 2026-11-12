@@ -9,6 +9,7 @@ use App\Http\Resources\Api\TokenResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserTokenController extends Controller
@@ -41,10 +42,25 @@ class UserTokenController extends Controller
      */
     public function destroyOthers(Request $request): JsonResponse
     {
-        $currentToken = $request->user()->currentAccessToken();
+        $user = $request->user();
+        $currentToken = $user->currentAccessToken();
 
-        $request->user()->tokens()
-            ->when($currentToken, fn ($query) => $query->where('id', '!=', $currentToken->id))
+        if (! $currentToken instanceof PersonalAccessToken && ($bearerToken = $request->bearerToken())) {
+            $candidate = PersonalAccessToken::findToken($bearerToken);
+            if (
+                $candidate instanceof PersonalAccessToken &&
+                (int) $candidate->tokenable_id === (int) $user->id &&
+                $candidate->tokenable_type === $user->getMorphClass()
+            ) {
+                $currentToken = $candidate;
+            }
+        }
+
+        $user->tokens()
+            ->when(
+                $currentToken instanceof PersonalAccessToken,
+                fn ($query) => $query->where('id', '!=', $currentToken->id)
+            )
             ->delete();
 
         return new JsonResponse([

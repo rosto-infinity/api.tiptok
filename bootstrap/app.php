@@ -21,16 +21,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectTo(
             guests: fn (Request $request) => $request->is('api/*') ? null : '/auth/login'
         );
-
-        $middleware->validateCsrfTokens(except: [
-            'login',
-            'register',
-            'logout',
-            'two-factor-challenge',
-            'user/*',
-            'forgot-password',
-            'reset-password',
-        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

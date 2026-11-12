@@ -20,7 +20,8 @@ class TokenResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $currentTokenId = $request->user()?->currentAccessToken()?->id;
+        $currentToken = $request->user()?->currentAccessToken();
+        $currentTokenId = $currentToken instanceof PersonalAccessToken ? $currentToken->id : null;
 
         return [
             'id' => $this->id,
@@ -29,7 +30,7 @@ class TokenResource extends JsonResource
             'last_used_at' => $this->last_used_at?->toISOString(),
             'expires_at' => $this->expires_at?->toISOString(),
             'created_at' => $this->created_at?->toISOString(),
-            'is_current' => $currentTokenId === $this->id,
+            'is_current' => $currentTokenId !== null && $currentTokenId === $this->id,
         ];
     }
 }

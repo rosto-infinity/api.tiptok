@@ -14,14 +14,29 @@ class DeleteUserAvatarAction
      */
     public function execute(User $user): User
     {
-        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-            Storage::disk('public')->delete($user->avatar);
-        }
+        $oldAvatar = $user->avatar;
 
         $user->forceFill([
             'avatar' => null,
         ])->save();
 
+        $this->deletePath($oldAvatar);
+
         return $user;
+    }
+
+    /**
+     * Safely remove an avatar path from the public disk if it resides under avatars/.
+     */
+    public function deletePath(?string $path): void
+    {
+        if (
+            is_string($path) &&
+            str_starts_with($path, 'avatars/') &&
+            ! str_contains($path, '..') &&
+            Storage::disk('public')->exists($path)
+        ) {
+            Storage::disk('public')->delete($path);
+        }
     }
 }

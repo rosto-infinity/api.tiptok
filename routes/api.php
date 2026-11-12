@@ -16,7 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum', 'throttle:api'])->name('api.')->group(function (): void {
     // Current user profile & account deletion
     Route::get('/user', [UserController::class, 'show'])->name('user.show');
-    Route::delete('/user/account', [UserController::class, 'destroy'])->name('user.account.destroy');
+    Route::delete('/user/account', [UserController::class, 'destroy'])
+        ->middleware('throttle:sensitive')
+        ->name('user.account.destroy');
 
     // Avatar management
     Route::post('/user/avatar', [UserAvatarController::class, 'update'])
@@ -27,5 +29,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->name('api.')->group(functio
     // Personal Access Tokens management
     Route::get('/user/tokens', [UserTokenController::class, 'index'])->name('user.tokens.index');
     Route::delete('/user/tokens/others', [UserTokenController::class, 'destroyOthers'])->name('user.tokens.destroy-others');
-    Route::delete('/user/tokens/{token}', [UserTokenController::class, 'destroy'])->name('user.tokens.destroy');
+    Route::delete('/user/tokens/{token}', [UserTokenController::class, 'destroy'])
+        ->whereNumber('token')
+        ->name('user.tokens.destroy');
 });

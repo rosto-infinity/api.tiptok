@@ -19,7 +19,13 @@ class UserAvatarController extends Controller
     public function update(Request $request, UpdateUserAvatarAction $action): UserResource
     {
         $validated = $request->validate([
-            'avatar' => ['required', 'image', 'mimes:jpeg,png,webp,jpg', 'max:2048'],
+            'avatar' => [
+                'required',
+                'image',
+                'mimes:jpeg,png,webp,jpg',
+                'dimensions:max_width=4096,max_height=4096',
+                'max:2048',
+            ],
         ]);
 
         /** @var User $user */

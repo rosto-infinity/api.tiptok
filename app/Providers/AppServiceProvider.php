@@ -44,6 +44,10 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(10)->by($request->user()?->id ?: $request->ip());
         });
 
+        RateLimiter::for('sensitive', function (Request $request) {
+            return Limit::perMinute(5)->by($request->user()?->id ?: $request->ip());
+        });
+
         // Configuration OpenAPI de Scramble avec support Bearer Token (Sanctum) pour Scalar
         Scramble::configure()
             ->withDocumentTransformers(function (OpenApi $openApi): void {
